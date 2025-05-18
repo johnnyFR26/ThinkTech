@@ -1,0 +1,10 @@
+{
+  "name": "Finanz-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/Finanz-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["Finanz"],
+  "// targets": "to see all targets run: nx show project Finanz-e2e --web",
+  "targets": {}
+}
