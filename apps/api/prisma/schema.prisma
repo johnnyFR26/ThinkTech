@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  phone    String
+  password String
+  cpf      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account   Account? // Apenas referência, sem @relation aqui
+}
+
+model Account {
+  id           String   @id @default(uuid())
+  currentValue Decimal
+  currency     Currency @default(BRL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories   Category[] @relation
+  transactions Transaction[] @relation// Corrigido o nome e adicionado Cascade
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId       Int? @unique  // Criado para referenciar corretamente o User
+}
+
+
+model Transaction {
+  id          String          @id @default(uuid())
+  value       Decimal
+  type        TransactionType @default(output)
+  destination String
+  description String
+
+  createdAt DateTime @default(now())
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  categoryId String
+  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+}
+
+model Category {
+  id          String @id @default(uuid())
+  name        String
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  transactions Transaction[] @relation
+}
+
+enum TransactionType {
+  input
+  output
+}
+
+enum Currency {
+  BRL
+  USS
+}
